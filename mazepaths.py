@@ -6,11 +6,18 @@ def main():
     w = getValidInput("What is the width of the maze? ",4,30)
     h = getValidInput("What is the height of the maze? ",4,30)
     Maze = [[[1,1,1,1] for x in range(w)] for y in range(h)]
+    k = 0
+    l = 0
+    for r in range(h):
+        for p in range(w):
+            Maze[r][p] = [getrandtop(Maze,l,k),1,1,getrandbottom(Maze,l,k,h)]
+            k = k + 1
+        l = l + 1
     #print(np.matrix(Maze))
     #print('\n'.join([''.join(['{:4}'.format(printelement(pos)) for pos in row]) for row in Maze]))
     j = 0
     for row in Maze:
-        print printrow(Maze,row,j)
+        print printrow(Maze,row,j,w,h)
         j=j+1
 
 
@@ -37,7 +44,7 @@ def isInt(s):
     except ValueError:
         return False
 
-def printrow(Maze,row,j):
+def printrow(Maze,row,j,w,h):
     this_row = ""
 
     if(j == 0):
@@ -76,9 +83,29 @@ def printrow(Maze,row,j):
             else:
                 this_row = this_row + "--+"
         else:
-            this_row = this_row + "   "
+            if(i == 0):
+                this_row = this_row + "+   "
+            elif(i >= (w-1)):
+                this_row = this_row + "  +"
+            else:
+                this_row = this_row + "   "
         i = i + 1
-
     return this_row
+
+def getrandtop(Maze,j,i):
+    if(j == 0):
+        return 1
+    else:
+        return 0
+        #if(Maze[(j-1)][i][3] == 1):
+        #    return 1
+        #else:
+        #    return random.randint(0, 1)
+
+def getrandbottom(Maze,j,i,h):
+    if(j == h-1):
+        return 1
+    else:
+        return random.randint(0, 1)
 
 main()
