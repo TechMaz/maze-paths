@@ -6,13 +6,16 @@ def main():
     w = getValidInput("What is the width of the maze? ",4,30)
     h = getValidInput("What is the height of the maze? ",4,30)
     Maze = [[[1,1,1,1] for x in range(w)] for y in range(h)]
-    k = 0
-    l = 0
-    for r in range(h):
-        for p in range(w):
-            Maze[r][p] = [getrandtop(Maze,l,k),1,1,getrandbottom(Maze,l,k,h)]
-            k = k + 1
-        l = l + 1
+    i = 0
+    j = 0
+    for j in range(h):
+        for i in range(w):
+            Maze[j][i] = [getrandtop(Maze,j,i),
+                          getrandleft(Maze,j,i),
+                          getrandright(Maze,j,i,w),
+                          getrandbottom(Maze,j,i,h)]
+            i = i + 1
+        j = j + 1
     #print(np.matrix(Maze))
     #print('\n'.join([''.join(['{:4}'.format(printelement(pos)) for pos in row]) for row in Maze]))
     j = 0
@@ -80,12 +83,22 @@ def printrow(Maze,row,j,w,h):
         if(pos[3] == 1):
             if(i == 0):
                 this_row = this_row + "+--+"
+            elif((i < w-1) & (j < h-1)):
+                if((Maze[j][i][2] == 0) & (Maze[j+1][i][2] == 0) & (Maze[j][i+1][3] == 0) & (Maze[j][i-1][3] == 0)):
+                    this_row = this_row + "---"
+                else:
+                    this_row = this_row + "--+"
             else:
                 this_row = this_row + "--+"
         else:
             if(i == 0):
-                this_row = this_row + "+   "
+                if((Maze[j][i][2] == 1) | (Maze[j+1][i][2] == 1) | (Maze[j][i+1][3] == 1)):
+                    this_row = this_row + "+  +"
+                else:
+                    this_row = this_row + "+   "
             elif(i >= (w-1)):
+                this_row = this_row + "  +"
+            elif((Maze[j][i][2] == 1) | (Maze[j+1][i][2] == 1)):
                 this_row = this_row + "  +"
             else:
                 this_row = this_row + "   "
@@ -96,14 +109,25 @@ def getrandtop(Maze,j,i):
     if(j == 0):
         return 1
     else:
-        return 0
-        #if(Maze[(j-1)][i][3] == 1):
-        #    return 1
-        #else:
-        #    return random.randint(0, 1)
+        if(Maze[j-1][i][3] == 1):
+            return 1
+        else:
+            return random.randint(0, 1)
 
 def getrandbottom(Maze,j,i,h):
     if(j == h-1):
+        return 1
+    else:
+        return random.randint(0, 1)
+
+def getrandleft(Maze,j,i):
+    if(i == 0):
+        return 1
+    else:
+        return random.randint(0, 1)
+
+def getrandright(Maze,j,i,w):
+    if(i >= w-1):
         return 1
     else:
         return random.randint(0, 1)
