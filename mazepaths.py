@@ -7,7 +7,7 @@ def main():
     h = getValidInput("What is the height of the maze? ",4,30)
     Maze = [[[1,1,1,1] for x in range(w)] for y in range(h)]
     end = getrandend(w,h)
-    print "Exit at: " + str(end)
+    print "Exit at: " + str(end) + " indicated by <>"
 
     make_maze(Maze,w,h,end)
     print_maze(Maze,w,h,end)
@@ -54,7 +54,7 @@ def get_shuffle(Maze,w,h):
     random.shuffle(Edges)
     random.shuffle(Edges)
     #print "\n"
-    print "Edges = " + str(Edges)
+    #print "Edges = " + str(Edges)
     return Edges
 
 '''
@@ -142,7 +142,7 @@ def divided_by_edge(Maze,j1,i1,j2,i2,w,h,orig_edge):
             return False
 
 def did_merge(Maze,j1,i1,j2,i2,w,h,orig_edge):
-    if (doespathexist(Maze,j1,i1,w,h,[j2,i2]) == False):
+    if (exists_path_between(Maze,j1,i1,j2,i2,w,h) == False):
         if (orig_edge == 0):
             Maze[j1][i1][0] = 0
             Maze[j2][i2][3] = 0
@@ -155,13 +155,37 @@ def did_merge(Maze,j1,i1,j2,i2,w,h,orig_edge):
         else:
             Maze[j1][i1][3] = 0
             Maze[j2][i2][0] = 0
-        print "merged [" + str(j1) + "," + str(i1) + "] and [" + str(j2) + "," + str(i2) + "]"
+        #print "merged [" + str(j1) + "," + str(i1) + "] and [" + str(j2) + "," + str(i2) + "]"
         return True
     else:
         return False
 
-# def exists_path_between(Maze,j1,i1,j2,i2,w,h):
+def exists_path_between(Maze,j1,i1,j2,i2,w,h):
+    reachable = list()
+    reachable.append([j2,i2])
+    last = [j2,i2]
+    find_reachable(reachable,Maze,j2,i2,w,h)
+    return ([j1,i1] in reachable)
 
+def find_reachable(reachable,Maze,j,i,w,h):
+    check_reachable(reachable,Maze,j,i,j-1,i,w,h,0)
+    check_reachable(reachable,Maze,j,i,j,i-1,w,h,1)
+    check_reachable(reachable,Maze,j,i,j,i+1,w,h,2)
+    check_reachable(reachable,Maze,j,i,j+1,i,w,h,3)
+
+
+def check_reachable(reachable,Maze,j,i,k,l,w,h,orig_edge):
+    if(is_valid_pos(k,l,w,h)):
+        if(divided_by_edge(Maze,j,i,k,l,w,h,orig_edge) == False):
+            if(in_list(reachable,[k,l]) == False):
+                reachable.append([k,l])
+                find_reachable(reachable,Maze,k,l,w,h)
+
+def in_list(l,item):
+    if (item in l):
+        return True
+    else:
+        return False
 
 '''
 def get_element(Maze,j,i,w,h,end):
@@ -208,7 +232,6 @@ def getrandright(Maze,j,i,w,end):
             return 1
         else:
             return random.randint(0, 1)
-'''
 
 def doespathexist(Maze,j,i,w,h,end):
     c = 0
@@ -230,6 +253,7 @@ def doespathexist(Maze,j,i,w,h,end):
             return False
         c = c+1
     return True
+
 
 def move(Maze,j_curr,i_curr,w,h,rem,last,end):
     if(len(rem) == 0):
@@ -283,6 +307,7 @@ def move(Maze,j_curr,i_curr,w,h,rem,last,end):
                     return [j_curr+1,i_curr]
             else:
                 return move(Maze,j_curr,i_curr,w,h,rem.difference([3]),last,end)
+'''
 
 def getrandend(w,h):
     opt = random.randint(0, 3)
