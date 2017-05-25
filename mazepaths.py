@@ -133,12 +133,6 @@ def check_reachable(reachable,Maze,j,i,k,l,w,h,orig_edge):
                 reachable.append([k,l])
                 find_reachable(reachable,Maze,k,l,w,h)
 
-def in_list(l,item):
-    if (item in l):
-        return True
-    else:
-        return False
-
 def getrandend(w,h):
     opt = random.randint(0, 3)
     if(opt == 0):
@@ -270,6 +264,12 @@ def getValidInput(prompt,min,max):
     else:
         print "Oops that's not a valid integer!"
         return getValidInput(prompt,min,max)
+
+def in_list(l,item):
+    if (item in l):
+        return True
+    else:
+        return False
 
 def isInt(s):
     try:
