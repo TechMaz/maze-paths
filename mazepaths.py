@@ -24,22 +24,146 @@ def main():
     '''
 
 
+
 def make_maze(Maze,w,h,end):
+    Edges = get_shuffle(Maze,w,h)
     needs_another_pass = True
+    step_count = 0
     while(needs_another_pass == True):
         needs_another_pass = False
+        for e in Edges:
+            #print "[ " + str(e[0]) + ", " + str(e[1]) + ", " + str(e[2]) + "]"
+            needs_another_pass = try_rand_edge(Maze,e[0],e[1],e[2],w,h,end)
+        if (step_count > 1):
+            break
+        step_count = step_count + 1
+
+'''
         j = 0
         i = 0
         for j in range(h):
             for i in range(w):
                 Maze[j][i] = get_element(Maze,j,i,w,h,end)
-                #needs_another_pass = try_random_edge(Maze,j,i,w,h,end)
                 i = i + 1
             j = j + 1
+'''
 
+def get_shuffle(Maze,w,h):
+    Edges = [[y,x,e] for x in range(w) for y in range(h) for e in range(4)]
+    #print str(Edges)
+    random.shuffle(Edges)
+    random.shuffle(Edges)
+    #print "\n"
+    print "Edges = " + str(Edges)
+    return Edges
+
+'''
 def try_random_edge(Maze,j,i,w,h,end):
-    return False
+    if(j == 0):
+        if (i = 0):
+            return try_rand_edge(Maze,j,i,w,h,end,[2,3])
+        elif (i == w-1):
+            return try_rand_edge(Maze,j,i,w,h,end,[0,2])
+        else:
+            return try_rand_edge(Maze,j,i,w,h,end,[0,2,3])
+    elif (j == h-1):
+        if (i = 0):
+            return try_rand_edge(Maze,j,i,w,h,end,[1,3])
+        elif (i == w-1):
+            return try_rand_edge(Maze,j,i,w,h,end,[0,1])
+        else:
+            return try_rand_edge(Maze,j,i,w,h,end,[0,1,3])
+    else:
+        if (i = 0):
+            return try_rand_edge(Maze,j,i,w,h,end,[1,2,3])
+        elif (i == w-1):
+            return try_rand_edge(Maze,j,i,w,h,end,[0,1,2])
+        else:
+            return try_rand_edge(Maze,j,i,w,h,end,[0,1,2,3])
+'''
 
+def try_rand_edge(Maze,j,i,edge,w,h,end):
+    #num_pos_edges = len(edges)
+    #if(num_pos_edges == 0):
+    #    return False
+    #else:
+    if (edge == 0):
+        return attempt_merge(Maze,j,i,j-1,i,w,h,edge)
+    elif (edge == 1):
+        return attempt_merge(Maze,j,i,j,i-1,w,h,edge)
+    elif (edge == 2):
+        return attempt_merge(Maze,j,i,j,i+1,w,h,edge)
+    else:
+        return attempt_merge(Maze,j,i,j+1,i,w,h,edge)
+
+def attempt_merge(Maze,j,i,k,l,w,h,orig_edge):
+    if (is_valid_pos(k,l,w,h)):
+        if(divided_by_edge(Maze,j,i,k,l,w,h,orig_edge)):
+            if(did_merge(Maze,j,i,k,l,w,h,orig_edge)):
+                return True
+            else:
+                return False
+        else:
+            return False
+    else:
+        return False
+
+def is_valid_pos(j,i,w,h):
+    if ((j < 0) | (j > h-1)):
+        return False
+    if ((i < 0) | (i > w-1)):
+        return False
+    return True
+
+def divided_by_edge(Maze,j1,i1,j2,i2,w,h,orig_edge):
+    if (orig_edge == 0):
+        #print "check [" + str(j1) + "," + str(i1) + "] edge 0 and [" + str(j2) + "," + str(i2) + "] edge 3"
+        if ((Maze[j1][i1][0] == 1) | (Maze[j2][i2][3] == 1)):
+            return True
+        else:
+            return False
+    elif (orig_edge == 1):
+        #print "check [" + str(j1) + "," + str(i1) + "] edge 1 and [" + str(j2) + "," + str(i2) + "] edge 2"
+        if ((Maze[j1][i1][1] == 1) | (Maze[j2][i2][2] == 1)):
+            return True
+        else:
+            return False
+    elif (orig_edge == 2):
+        #print "check [" + str(j1) + "," + str(i1) + "] edge 2 and [" + str(j2) + "," + str(i2) + "] edge 1"
+        if ((Maze[j1][i1][2] == 1) | (Maze[j2][i2][1] == 1)):
+            return True
+        else:
+            return False
+    else:
+        #print "check [" + str(j1) + "," + str(i1) + "] edge 3 and [" + str(j2) + "," + str(i2) + "] edge 0"
+        if ((Maze[j1][i1][3] == 1) | (Maze[j2][i2][0] == 1)):
+            return True
+        else:
+            return False
+
+def did_merge(Maze,j1,i1,j2,i2,w,h,orig_edge):
+    if (doespathexist(Maze,j1,i1,w,h,[j2,i2]) == False):
+        if (orig_edge == 0):
+            Maze[j1][i1][0] = 0
+            Maze[j2][i2][3] = 0
+        elif (orig_edge == 1):
+            Maze[j1][i1][1] = 0
+            Maze[j2][i2][2] = 0
+        elif (orig_edge == 2):
+            Maze[j1][i1][2] = 0
+            Maze[j2][i2][1] = 0
+        else:
+            Maze[j1][i1][3] = 0
+            Maze[j2][i2][0] = 0
+        print "merged [" + str(j1) + "," + str(i1) + "] and [" + str(j2) + "," + str(i2) + "]"
+        return True
+    else:
+        return False
+
+# def exists_path_between(Maze,j1,i1,j2,i2,w,h):
+
+
+'''
 def get_element(Maze,j,i,w,h,end):
     return [getrandtop(Maze,j,i,end),
             getrandleft(Maze,j,i,end),
@@ -84,17 +208,7 @@ def getrandright(Maze,j,i,w,end):
             return 1
         else:
             return random.randint(0, 1)
-
-def getrandend(w,h):
-    opt = random.randint(0, 3)
-    if(opt == 0):
-        return [random.randint(0, h-1), w-1]
-    elif(opt == 1):
-        return [random.randint(0, h-1), 0]
-    elif(opt == 2):
-        return [h-1, random.randint(0, w-1)]
-    else:
-        return [0, random.randint(0, w-1)]
+'''
 
 def doespathexist(Maze,j,i,w,h,end):
     c = 0
@@ -110,7 +224,8 @@ def doespathexist(Maze,j,i,w,h,end):
         pos = move(Maze,j,i,w,h,set([0,1,2,3]),last,end)
         last = [j,i]
         if(pos != None):
-            print "moved [" + str(last[0]) + ", " + str(last[1]) + "] --> [" + str(pos[0]) + ", " + str(pos[1]) + "]"
+            continue
+            #print "moved [" + str(last[0]) + ", " + str(last[1]) + "] --> [" + str(pos[0]) + ", " + str(pos[1]) + "]"
         else:
             return False
         c = c+1
@@ -169,6 +284,16 @@ def move(Maze,j_curr,i_curr,w,h,rem,last,end):
             else:
                 return move(Maze,j_curr,i_curr,w,h,rem.difference([3]),last,end)
 
+def getrandend(w,h):
+    opt = random.randint(0, 3)
+    if(opt == 0):
+        return [random.randint(0, h-1), w-1]
+    elif(opt == 1):
+        return [random.randint(0, h-1), 0]
+    elif(opt == 2):
+        return [h-1, random.randint(0, w-1)]
+    else:
+        return [0, random.randint(0, w-1)]
 
 # Printing of Maze:
 
