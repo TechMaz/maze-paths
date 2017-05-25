@@ -16,11 +16,13 @@ def main():
                           getrandbottom(Maze,j,i,h)]
             i = i + 1
         j = j + 1
+
+    end = getrandend(w,h)
     #print(np.matrix(Maze))
     #print('\n'.join([''.join(['{:4}'.format(printelement(pos)) for pos in row]) for row in Maze]))
     j = 0
     for row in Maze:
-        print printrow(Maze,row,j,w,h)
+        print printrow(Maze,row,j,w,h,end)
         j=j+1
 
 
@@ -47,7 +49,7 @@ def isInt(s):
     except ValueError:
         return False
 
-def printrow(Maze,row,j,w,h):
+def printrow(Maze,row,j,w,h,end):
     this_row = ""
 
     if(j == 0):
@@ -71,10 +73,16 @@ def printrow(Maze,row,j,w,h):
             else:
                 this_row = this_row + " "
 
-        if(pos[2] == 1):
-            this_row = this_row + "  |"
+        if(end == [j,i]):
+            if(pos[2] == 1):
+                this_row = this_row + "$$|"
+            else:
+                this_row = this_row + "$$ "
         else:
-            this_row = this_row + "   "
+            if(pos[2] == 1):
+                this_row = this_row + "  |"
+            else:
+                this_row = this_row + "   "
         i = i+1
     this_row = this_row + '\n'
 
@@ -84,7 +92,7 @@ def printrow(Maze,row,j,w,h):
             if(i == 0):
                 this_row = this_row + "+--+"
             elif((i < w-1) & (j < h-1)):
-                if((Maze[j][i][2] == 0) & (Maze[j+1][i][2] == 0) & (Maze[j][i+1][3] == 0) & (Maze[j][i-1][3] == 0)):
+                if((Maze[j][i][2] == 0) & (Maze[j][i][1] == 0) & (Maze[j+1][i][2] == 0) & (Maze[j][i+1][3] == 0) & (Maze[j][i-1][3] == 0)):
                     this_row = this_row + "---"
                 else:
                     this_row = this_row + "--+"
@@ -131,5 +139,16 @@ def getrandright(Maze,j,i,w):
         return 1
     else:
         return random.randint(0, 1)
+
+def getrandend(w,h):
+    opt = random.randint(0, 3)
+    if(opt == 0):
+        return [random.randint(0, h-1), w-1]
+    elif(opt == 1):
+        return [random.randint(0, h-1), 0]
+    elif(opt == 2):
+        return [h-1, random.randint(0, w-1)]
+    else:
+        return [0, random.randint(0, w-1)]
 
 main()
