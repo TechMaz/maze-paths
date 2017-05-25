@@ -7,22 +7,9 @@ def main():
     h = getValidInput("What is the height of the maze? ",4,30)
     Maze = [[[1,1,1,1] for x in range(w)] for y in range(h)]
     end = getrandend(w,h)
-    print "Exit at: " + str(end) + " indicated by <>"
-
+    print "Exit at: " + str([end[1],end[0]]) + " indicated by <> \n"
     make_maze(Maze,w,h,end)
     print_maze(Maze,w,h,end)
-
-    '''
-    j = 0
-    i = 0
-    while (j <= w-1):
-        while (i <= h-1):
-            print "Check position [" + str(j) + ", " + str(i) + "] : " + str(Maze[j][i])
-            print str(doespathexist(Maze,j,i,w,h,end)) + '\n'
-            i = i+1
-        j = j+1
-    '''
-
 
 
 def make_maze(Maze,w,h,end):
@@ -34,19 +21,9 @@ def make_maze(Maze,w,h,end):
         for e in Edges:
             #print "[ " + str(e[0]) + ", " + str(e[1]) + ", " + str(e[2]) + "]"
             needs_another_pass = try_rand_edge(Maze,e[0],e[1],e[2],w,h,end)
-        if (step_count > 1):
+        if (step_count > (w*h)):
             break
         step_count = step_count + 1
-
-'''
-        j = 0
-        i = 0
-        for j in range(h):
-            for i in range(w):
-                Maze[j][i] = get_element(Maze,j,i,w,h,end)
-                i = i + 1
-            j = j + 1
-'''
 
 def get_shuffle(Maze,w,h):
     Edges = [[y,x,e] for x in range(w) for y in range(h) for e in range(4)]
@@ -56,31 +33,6 @@ def get_shuffle(Maze,w,h):
     #print "\n"
     #print "Edges = " + str(Edges)
     return Edges
-
-'''
-def try_random_edge(Maze,j,i,w,h,end):
-    if(j == 0):
-        if (i = 0):
-            return try_rand_edge(Maze,j,i,w,h,end,[2,3])
-        elif (i == w-1):
-            return try_rand_edge(Maze,j,i,w,h,end,[0,2])
-        else:
-            return try_rand_edge(Maze,j,i,w,h,end,[0,2,3])
-    elif (j == h-1):
-        if (i = 0):
-            return try_rand_edge(Maze,j,i,w,h,end,[1,3])
-        elif (i == w-1):
-            return try_rand_edge(Maze,j,i,w,h,end,[0,1])
-        else:
-            return try_rand_edge(Maze,j,i,w,h,end,[0,1,3])
-    else:
-        if (i = 0):
-            return try_rand_edge(Maze,j,i,w,h,end,[1,2,3])
-        elif (i == w-1):
-            return try_rand_edge(Maze,j,i,w,h,end,[0,1,2])
-        else:
-            return try_rand_edge(Maze,j,i,w,h,end,[0,1,2,3])
-'''
 
 def try_rand_edge(Maze,j,i,edge,w,h,end):
     #num_pos_edges = len(edges)
@@ -187,128 +139,6 @@ def in_list(l,item):
     else:
         return False
 
-'''
-def get_element(Maze,j,i,w,h,end):
-    return [getrandtop(Maze,j,i,end),
-            getrandleft(Maze,j,i,end),
-            getrandright(Maze,j,i,w,end),
-            getrandbottom(Maze,j,i,h,end)]
-
-def getrandtop(Maze,j,i,end):
-    if(end == [j,i]):
-        return 0
-    else:
-        if(j == 0):
-            return 1
-        else:
-            if(Maze[j-1][i][3] == 1):
-                return 1
-            else:
-                return random.randint(0, 1)
-
-def getrandbottom(Maze,j,i,h,end):
-    if(end == [j,i]):
-        return 0
-    else:
-        if(j == h-1):
-            return 1
-        else:
-            return random.randint(0, 1)
-
-def getrandleft(Maze,j,i,end):
-    if(end == [j,i]):
-        return 0
-    else:
-        if(i == 0):
-            return 1
-        else:
-            return random.randint(0, 1)
-
-def getrandright(Maze,j,i,w,end):
-    if(end == [j,i]):
-        return 0
-    else:
-        if(i >= w-1):
-            return 1
-        else:
-            return random.randint(0, 1)
-
-def doespathexist(Maze,j,i,w,h,end):
-    c = 0
-    last = None
-    pos = [j,i]
-    while(end != pos):
-        if (pos == None):
-            return False
-        elif(c > (w*h)):
-            return False
-        j = pos[0]
-        i = pos[1]
-        pos = move(Maze,j,i,w,h,set([0,1,2,3]),last,end)
-        last = [j,i]
-        if(pos != None):
-            continue
-            #print "moved [" + str(last[0]) + ", " + str(last[1]) + "] --> [" + str(pos[0]) + ", " + str(pos[1]) + "]"
-        else:
-            return False
-        c = c+1
-    return True
-
-
-def move(Maze,j_curr,i_curr,w,h,rem,last,end):
-    if(len(rem) == 0):
-        return None
-    elif(len(rem) == 1):
-        dir = random.randint(0, len(rem) - 1)
-        if(dir == 0):
-            if (Maze[j_curr][i_curr][0] == 1):
-                return None
-        elif(dir == 1):
-            if (Maze[j_curr][i_curr][1] == 1):
-                return None
-        elif(dir == 2):
-            if (Maze[j_curr][i_curr][2] == 1):
-                return None
-        else:
-            if (Maze[j_curr][i_curr][3] == 1):
-                return None
-    else:
-        dir = random.randint(0, len(rem) - 1)
-        rem_array =  np.array([item for item in rem])
-        if(rem_array[dir] == 0):
-            if ((Maze[j_curr][i_curr][0] == 0) & (j_curr-1 >= 0)):
-                if (last == [j_curr-1,i_curr]):
-                    return move(Maze,j_curr,i_curr,w,h,rem.difference([0]),last,end)
-                else:
-                    return [j_curr-1,i_curr]
-            else:
-                return move(Maze,j_curr,i_curr,w,h,rem.difference([0]),last,end)
-        elif(rem_array[dir] == 1):
-            if ((Maze[j_curr][i_curr][1] == 0) & (i_curr-1 >= 0)):
-                if (last == [j_curr,i_curr-1]):
-                    return move(Maze,j_curr,i_curr,w,h,rem.difference([1]),last,end)
-                else:
-                    return [j_curr,i_curr-1]
-            else:
-                return move(Maze,j_curr,i_curr,w,h,rem.difference([1]),last,end)
-        elif(rem_array[dir] == 2):
-            if ((Maze[j_curr][i_curr][2] == 0) & (i_curr+1 <= w-1)):
-                if(last == [j_curr,i_curr+1]):
-                    return move(Maze,j_curr,i_curr,w,h,rem.difference([2]),last,end)
-                else:
-                    return [j_curr,i_curr+1]
-            else:
-                return move(Maze,j_curr,i_curr,w,h,rem.difference([2]),last,end)
-        else:
-            if ((Maze[j_curr][i_curr][3] == 0) & (j_curr+1 <= h-1)):
-                if (last == [j_curr+1,i_curr]):
-                    return move(Maze,j_curr,i_curr,w,h,rem.difference([3]),last,end)
-                else:
-                    return [j_curr+1,i_curr]
-            else:
-                return move(Maze,j_curr,i_curr,w,h,rem.difference([3]),last,end)
-'''
-
 def getrandend(w,h):
     opt = random.randint(0, 3)
     if(opt == 0):
@@ -405,7 +235,7 @@ def print_row(Maze,row,j,w,h,end):  #code to format printing of each row in maze
                     this_row = this_row + "--+"
             else:
                 if(end == [j,i]):
-                    this_row = this_row + "  +"
+                    this_row = this_row + "   "
                 else:
                     this_row = this_row + "--+"
         else:
