@@ -7,7 +7,8 @@ def main():
     h = getValidInput("What is the height of the maze? ",4,30)
     Maze = [[[1,1,1,1] for x in range(w)] for y in range(h)]
     end = getrandend(w,h)
-    print "Exit at: " + str([end[1],end[0]]) + " indicated by <> \n"
+    print "Exit at: " + str([end[1],end[0]]) + " indicated by <>"
+    print "Creating maze... \n"
     make_maze(Maze,w,h,end)
     print_maze(Maze,w,h,end)
 
